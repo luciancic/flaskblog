@@ -3,13 +3,13 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegisterForm, LoginForm, UpdateAccountForm
-from flaskblog.posts_tmp import posts
-from flaskblog.models import User
+from flaskblog.forms import RegisterForm, LoginForm, UpdateAccountForm, CreatePostForm
+from flaskblog.models import User, Post
 from flask_login import login_user, logout_user, login_required, current_user
 
 @app.route('/')
 def home():
+    posts = Post.query.all()
     return render_template('home.html', posts=posts)
 
 
@@ -85,3 +85,16 @@ def account():
         form.email.data = current_user.email
     image_file = os.path.join('static', 'profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', form=form, image_file=image_file)
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = CreatePostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created', 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', title='New Post', form=form)

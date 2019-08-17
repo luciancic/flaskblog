@@ -97,7 +97,7 @@ def new_post():
         db.session.commit()
         flash('Post created', 'success')
         return redirect(url_for('home'))
-    return render_template('new_post.html', title='New Post', form=form)
+    return render_template('create_or_edit_post.html', title='New Post', legend='New Post', form=form)
 
 
 @app.route('/user/<username>')

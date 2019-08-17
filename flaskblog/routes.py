@@ -103,7 +103,7 @@ def new_post():
         db.session.commit()
         flash('Post created!', 'success')
         return redirect(url_for('home'))
-    return render_template('create_or_edit_post.html', title='New Post', legend='New Post', form=form)
+    return render_template('post_new.html', title='New Post', legend='New Post', form=form)
 
 
 @app.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
@@ -122,7 +122,7 @@ def update_post(post_id):
     if request.method == 'GET':
         form.title.data = post.title
         form.content.data = post.content
-    return render_template('create_or_edit_post.html', title='New Post', legend='Update Post', form=form)
+    return render_template('post_update.html', title='New Post', legend='Update Post', form=form)
 
 
 @app.route('/post/<int:post_id>/delete', methods=['GET', 'DELETE'])

@@ -126,6 +126,6 @@ def update_post(post_id):
 
 @app.route('/user/<username>')
 def user_profile(username):
-    user = User.query.filter_by(username=username).first()
-    image_file = os.path.join('/', 'static', 'profile_pics', user.image_file) if user else ''
+    user = User.query.filter_by(username=username).first_or_404()
+    image_file = os.path.join('/', 'static', 'profile_pics', user.image_file)
     return render_template('user.html', user=user, image_file=image_file)

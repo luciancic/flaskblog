@@ -87,6 +87,12 @@ def account():
     return render_template('account.html', title='Account', form=form, image_file=image_file)
 
 
+@app.route('/post/<int:post_id>')
+def view_post(post_id):
+    post = Post.query.get(post_id)
+    return render_template('post.html', post=post)
+
+
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():

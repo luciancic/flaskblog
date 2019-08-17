@@ -3,15 +3,15 @@
 {% block content %}
     <div class="card">
         <div class="card-body">
-            <div>
-                <h2 class="card-title">{{ post.title }}</h2>
-                {% if post.author == current_user %}
-                    <a class="btn btn-primary" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</a>
-                {% endif %}
-            </div>
+            <h2 class="card-title">{{ post.title }}</h2>
+            {% if post.author == current_user %}
+                <div class="mb-3">
+                    <a class="btn btn-primary btn-sm mr-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                </div>
+            {% endif %}
             <p class="card-text">{{ post.content }}</p>
-            <small class="card-subtitle">By {{ post.author.username }}, {{ post.date_posted.date() }}</small>
+            <small class="card-subtitle">By <a href="{{ url_for('user_profile', username=post.author.username) }}">{{ post.author.username }}</a>, {{ post.date_posted.date() }}</small>
         </div>
     </div>
 

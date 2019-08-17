@@ -1,7 +1,7 @@
 import os
 import secrets
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegisterForm, LoginForm, UpdateAccountForm, CreatePostForm
 from flaskblog.models import User, Post
@@ -95,10 +95,28 @@ def new_post():
         post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
         db.session.add(post)
         db.session.commit()
-        flash('Post created', 'success')
+        flash('Post created!', 'success')
         return redirect(url_for('home'))
     return render_template('create_or_edit_post.html', title='New Post', legend='New Post', form=form)
 
+
+@app.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = CreatePostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash('Post updated!', 'success')
+        return redirect(url_for('home'))
+    if request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template('create_or_edit_post.html', title='New Post', legend='Update Post', form=form)
 
 @app.route('/user/<username>')
 def user_profile(username):

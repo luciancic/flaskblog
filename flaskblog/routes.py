@@ -124,6 +124,19 @@ def update_post(post_id):
         form.content.data = post.content
     return render_template('create_or_edit_post.html', title='New Post', legend='Update Post', form=form)
 
+
+@app.route('/post/<int:post_id>/delete', methods=['GET', 'DELETE'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Post deleted!', 'success')
+    return redirect(url_for('home'))
+
+
 @app.route('/user/<username>')
 def user_profile(username):
     user = User.query.filter_by(username=username).first_or_404()

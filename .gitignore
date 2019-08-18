@@ -1,2 +1,6 @@
 flaskblog/__pycache__/
+flaskblog/static/profile_pics/*
 flaskblog/data.db
+
+# Ignore all profile pics except the default
+!flaskblog/static/default.jpg

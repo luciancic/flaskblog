@@ -2,10 +2,11 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from flaskblog import app, db, bcrypt
+from flaskblog import app, db, bcrypt, mail
 from flaskblog.forms import RegisterForm, LoginForm, UpdateAccountForm, CreatePostForm, RequestResetForm, PasswordResetForm
 from flaskblog.models import User, Post
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 
 @app.route('/')
 def home():
@@ -47,7 +48,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('You account was created. You may now login.', 'success')
+        flash('Your account was created. You may now login.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -155,8 +156,15 @@ def request_reset():
         return redirect(url_for('home'))
     form = RequestResetForm()
     if form.validate_on_submit():
-        # Send email
-        pass
+        user = User.query.filter_by(email=form.email.data).first()
+        message = Message(subject='Reset Password - Flaskblog', recipients=[user.email], sender=('Flaskblog', 'noreply@flaskblog.com'))
+        message.body = f'''Click the link below to reset your password:
+{url_for('password_reset', token=user.generate_user_token(), _external=True)}
+
+If you did not request a password reset you can safely ignore this email.
+'''
+        mail.send(message)
+        flash('An email has been sent with reset instructions.', 'info')
     return render_template('request_reset.html', form=form)
 
 
@@ -164,8 +172,15 @@ def request_reset():
 def password_reset(token):
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    user = User.verify_user_token(token)
+    if not user:
+        flash('Token invalid or expired.', 'warning')
+        return redirect('request_reset')
     form = PasswordResetForm()
     if form.validate_on_submit():
-        # Reset Password
-        pass
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password was reset. You may now login.', 'success')
+        return redirect(url_for('login'))
     return render_template('password_reset.html', form=form)

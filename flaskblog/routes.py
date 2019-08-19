@@ -145,7 +145,7 @@ def delete_post(post_id):
 def user_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     image_file = os.path.join('/', 'static', 'profile_pics', user.image_file)
-    pagination = Post.query.order_by(Post.date_posted.desc()).paginate(per_page=4)
+    pagination = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(per_page=4)
     return render_template('user.html', user=user, image_file=image_file, pagination=pagination)
 
 

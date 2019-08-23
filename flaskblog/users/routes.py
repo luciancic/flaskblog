@@ -1,15 +1,19 @@
-from flask import Blueprint
 import os
 import secrets
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
-from flaskblog import db, bcrypt, mail
-from flaskblog.forms import RegisterForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm
-from flaskblog.models import User, Post
+
+from flask import Blueprint, render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 
+from flaskblog import db, bcrypt, mail
+from flaskblog.forms import RegisterForm, LoginForm,\
+                            UpdateAccountForm, RequestResetForm, PasswordResetForm
+from flaskblog.models import User, Post
+
+
 users = Blueprint('users', import_name=__name__)
+
 
 @users.route('/login', methods=['GET', 'POST'])
 def login():
@@ -87,6 +91,7 @@ def account():
 def user_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     image_file = os.path.join('/', 'static', 'profile_pics', user.image_file)
+    #pylint: disable=no-member
     pagination = Post.query.filter_by(author=user)\
         .order_by(Post.date_posted.desc()).paginate(per_page=4)
     return render_template('user.html', user=user, image_file=image_file, pagination=pagination)

@@ -1,4 +1,4 @@
-flaskblog/**/__pycache__/
+**/__pycache__/
 flaskblog/static/profile_pics/*
 flaskblog/data.db
 flaskblog/config_private.py

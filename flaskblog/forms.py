@@ -2,14 +2,14 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import Required, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flaskblog.models import User
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username', [Required(), Length(min=2, max=20)])
-    email = StringField('Email', [Required(), Email()])
-    password = PasswordField('Password', [Required(), Length(min=6)])
-    confirm_password = PasswordField('Confirm Password', [Required(), EqualTo('password')])
+    username = StringField('Username', [DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', [DataRequired(), Email()])
+    password = PasswordField('Password', [DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
@@ -24,15 +24,15 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', [Required(), Email()])
-    password = PasswordField('Password', [Required()])
+    email = StringField('Email', [DataRequired(), Email()])
+    password = PasswordField('Password', [DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
     
 
 class UpdateAccountForm(FlaskForm):
-    username = StringField('Username', [Required(), Length(min=2, max=20)])
-    email = StringField('Email', [Required(), Email()])
+    username = StringField('Username', [DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', [DataRequired(), Email()])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
     submit = SubmitField('Update')
 
@@ -50,13 +50,13 @@ class UpdateAccountForm(FlaskForm):
 
 
 class CreatePostForm(FlaskForm):
-    title = StringField('Title', validators=[Required(), Length(max=100)])
-    content = TextAreaField('Content', validators=[Required()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=100)])
+    content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
 
 
 class RequestResetForm(FlaskForm):
-    email = StringField('Email', [Required(), Email()])
+    email = StringField('Email', [DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
@@ -66,6 +66,6 @@ class RequestResetForm(FlaskForm):
 
 
 class PasswordResetForm(FlaskForm):
-    password = PasswordField('Password', [Required(), Length(min=6)])
-    confirm_password = PasswordField('Confirm Password', [Required(), EqualTo('password')])
+    password = PasswordField('Password', [DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')

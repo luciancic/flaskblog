@@ -9,9 +9,11 @@ from flask_mail import Mail
 
 
 db = SQLAlchemy()
+mail = Mail()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-mail = Mail()
+login_manager.login_view = 'users.login'
+login_manager.login_message_category = 'info'
 
 
 
@@ -27,8 +29,6 @@ def create_app(Config: BaseConfig = BaseConfig):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    login_manager.login_view = 'users.login'
-    login_manager.login_message_category = 'info'
 
     app.register_blueprint(main)
     app.register_blueprint(users)

@@ -7,3 +7,10 @@ class BaseConfig(MailConfig):
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
+
+
+class TestConfig(BaseConfig):
+    TESTING = True
+    SECRET_KEY = 'wejn1rkjn9v0df21fe5dfhh'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+    

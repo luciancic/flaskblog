@@ -1,20 +1,18 @@
 '''Makes the tester available in all inheriting test cases'''
-import unittest
 
-from flaskblog import app, db
+import os
+import pytest
+from flaskblog.config.base import TestConfig
+from flaskblog import create_app, db
 
-app.config['TESTING'] = True
-app.config['SECRET_KEY'] = 'wejn1rkjn9v0df21fe5dfhh'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
-class InitTest(unittest.TestCase):
-    app = app.test_client()
-
-    def setUpClass(self):
+@pytest.fixture
+def client():
+    app = create_app(TestConfig)
+    with app.app_context():
         db.create_all()
-
-    def setUp(self):
-        pass
-
-    def tearDownClass(self):
+    with app.test_client() as test_client:
+        yield test_client
+    with app.app_context():
         db.drop_all()
+        os.remove('test.db')

@@ -1,4 +1,4 @@
-from flaskblog.init_test import client
+'''Test for main module'''
 
 def test_home(client):
     response = client.get('/')

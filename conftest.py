@@ -1,6 +1,5 @@
 '''Makes the tester available in all inheriting test cases'''
 
-import os
 import pytest
 from flaskblog.config.base import TestConfig
 from flaskblog import create_app, db
@@ -15,4 +14,3 @@ def client():
         yield test_client
     with app.app_context():
         db.drop_all()
-        os.remove('test.db')
